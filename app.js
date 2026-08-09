@@ -5200,7 +5200,7 @@
     
     if (DOM.btnGithubLogin) {
       DOM.btnGithubLogin.addEventListener('click', () => {
-        window.location.href = 'https://github.com/login/oauth/authorize?client_id=Ov23liz8eltIME9yWMyj&scope=repo';
+        window.location.href = 'https://github.com/login/oauth/authorize?client_id=Ov23liz8eltIME9yWMyj&scope=repo&redirect_uri=https://panthernote-gatekeeper.smandavi2003.workers.dev/oauth/callback';
       });
     }
     
