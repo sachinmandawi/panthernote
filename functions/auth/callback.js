@@ -20,12 +20,8 @@ export async function onRequest(context) {
     return new Response('No authorization code provided by GitHub.', { status: 400 });
   }
 
-  const clientId = context.env.GITHUB_CLIENT_ID;
-  const clientSecret = context.env.GITHUB_CLIENT_SECRET;
-
-  if (!clientId || !clientSecret) {
-    return new Response('GitHub OAuth credentials not configured in Cloudflare.', { status: 500 });
-  }
+  const clientId = context.env.GITHUB_CLIENT_ID || 'Ov23liz8eHtIME9yWMyj';
+  const clientSecret = context.env.GITHUB_CLIENT_SECRET || '6f90282ac83f61b2bc202bfb4315928829ddd828';
 
   try {
     // Exchange code for token

@@ -1,8 +1,5 @@
 export async function onRequest(context) {
-  const clientId = context.env.GITHUB_CLIENT_ID;
-  if (!clientId) {
-    return new Response('GITHUB_CLIENT_ID not configured in Cloudflare', { status: 500 });
-  }
+  const clientId = context.env.GITHUB_CLIENT_ID || 'Ov23liz8eHtIME9yWMyj';
 
   // Generate a random state string for security
   const state = crypto.randomUUID();
