@@ -105,21 +105,14 @@ flowchart TD
 
 ## 🚀 Getting Started
 
-### 1. Clone the repository
 ```bash
+# 1. Clone the repository
 git clone https://github.com/sachinmandawi/panthernote.git
 cd panthernote
-```
 
-### 2. Serve locally
-Launch using any local web server:
-```bash
-# Python 3
+# 2. Serve locally
 python -m http.server 8000
 ```
-
-### 3. Open in Browser
-Visit `http://localhost:8000` to run PantherNote on your local machine.
 
 ---
 
