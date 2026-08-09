@@ -5130,38 +5130,24 @@
     const sharedData = urlParams.get('share');
     
     if (sharedData) {
-      document.getElementById('auth-overlay').classList.remove('active');
-      document.getElementById('shared-credential-overlay').classList.add('active');
+      document.getElementById('auth-overlay')?.classList.remove('active');
+      document.getElementById('shared-credential-overlay')?.classList.add('active');
       const shareKey = window.location.hash.substring(1);
       
       try {
         if (!shareKey) throw new Error('No decryption key found in URL hash');
         
-        const rawKey = new Uint8Array(shareKey.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-        const cryptoKey = await window.crypto.subtle.importKey(
-          'raw',
-          rawKey,
-          { name: 'AES-GCM' },
-          false,
-          ['encrypt', 'decrypt']
-        );
-        
-        const decoded = decodeURIComponent(sharedData);
-        let encryptedObj;
-        if (decoded.includes('{')) {
-          encryptedObj = JSON.parse(decoded);
-        } else {
-          const parts = decoded.split('.');
-          encryptedObj = { iv: parts[0], ciphertext: parts[1] };
-        }
-        
-        const item = await CryptoEngine.decryptData(encryptedObj, cryptoKey);
+        const jsonStr = decodeURIComponent(atob(sharedData));
+        const encryptedObj = JSON.parse(jsonStr);
+        const decryptedPayload = await CryptoEngine.decryptItem(encryptedObj, shareKey);
+        const item = JSON.parse(decryptedPayload);
         
         if (Date.now() > item.expiresAt) {
           throw new Error('Link Expired');
         }
         
-        document.getElementById('shared-credential-status').innerHTML = `<i class="fa-solid fa-circle-check text-green"></i> Decrypted successfully.`;
+        const statusEl = document.getElementById('shared-credential-status');
+        if (statusEl) statusEl.innerHTML = `<i class="fa-solid fa-circle-check text-green"></i> Decrypted successfully.`;
         
         let html = `<div style="font-size:1.2rem; font-weight:700; color:#fff; margin-bottom:1rem; text-align:center;">
           ${item.type === 'card' ? '<i class="fa-regular fa-credit-card"></i>' : (item.type === 'bank' ? '<i class="fa-solid fa-building-columns"></i>' : (item.type === 'note' ? '<i class="fa-regular fa-note-sticky"></i>' : '<i class="fa-solid fa-globe"></i>'))} 
@@ -5172,15 +5158,18 @@
         html += await generateItemPreviewHtml(item);
 
         const contentEl = document.getElementById('shared-credential-content');
-        contentEl.innerHTML = html;
-        contentEl.style.display = 'block';
-        bindPreviewActionListeners(contentEl);
+        if (contentEl) {
+          contentEl.innerHTML = html;
+          contentEl.style.display = 'block';
+          bindPreviewActionListeners(contentEl);
+        }
         
       } catch (err) {
-        document.getElementById('shared-credential-status').innerHTML = `<span class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Invalid or Expired Link</span>`;
+        const statusEl = document.getElementById('shared-credential-status');
+        if (statusEl) statusEl.innerHTML = `<span class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Invalid or Expired Link</span>`;
       }
       
-      document.getElementById('btn-shared-go-home').addEventListener('click', () => {
+      document.getElementById('btn-shared-go-home')?.addEventListener('click', () => {
         window.location.href = window.location.href.split('?')[0].split('#')[0];
       });
       
