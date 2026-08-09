@@ -5200,7 +5200,7 @@
     
     if (DOM.btnGithubLogin) {
       DOM.btnGithubLogin.addEventListener('click', () => {
-        window.location.href = '/auth/login';
+        window.location.href = 'https://github.com/login/oauth/authorize?client_id=Ov23liz8eltIME9yWMyj&scope=repo';
       });
     }
     
