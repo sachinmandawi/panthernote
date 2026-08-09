@@ -1,8 +1,8 @@
 <div align="center">
 
-  <!-- Native SVG Header Banner -->
+  <!-- Real Animated GIF Header Banner -->
   <p align="center">
-    <img src="header-banner.svg" alt="PantherNote Header Banner" width="100%" />
+    <img src="header-banner.gif" alt="PantherNote Animated Header Banner" width="100%" />
   </p>
 
   <p align="center">
