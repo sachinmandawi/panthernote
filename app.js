@@ -1,6 +1,6 @@
 /**
- * CIPHERVAULT - Zero-Knowledge Password Manager Engine
- * Database: Private GitHub Repository (`sachinmandawi/ciphervault-db`)
+ * PANTHERNOTE - Zero-Knowledge Password Manager Engine
+ * Database: Private GitHub Repository (`sachinmandawi/panthernote-db`)
  * Session Handling: Tab Session Persistence via SessionStorage (Persists on F5 Refresh)
  * Features: AES-256-GCM Zero-Knowledge, Dedicated Live 2FA Authenticator Section, 1-Click Preview,
  * Encrypted File Attachments (Max 10MB), Custom Tags System
@@ -16,7 +16,7 @@
         <div style="display:flex; height:100vh; background:#0f172a; color:#f8fafc; font-family:sans-serif; align-items:center; justify-content:center; text-align:center; padding:2rem;">
           <div style="max-width:500px; background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.3); padding:2rem; border-radius:12px;">
             <h1 style="color:#ef4444; margin-bottom:1rem; font-size:1.5rem;"><i class="fa-solid fa-triangle-exclamation"></i> Insecure Connection Detected</h1>
-            <p style="color:#94a3b8; line-height:1.6; font-size:1rem;">CipherVault is a Zero-Knowledge Password Manager that relies on the Web Crypto API to encrypt your data locally. Modern browsers strictly disable this API on insecure connections to protect you.</p>
+            <p style="color:#94a3b8; line-height:1.6; font-size:1rem;">PantherNote is a Zero-Knowledge Password Manager that relies on the Web Crypto API to encrypt your data locally. Modern browsers strictly disable this API on insecure connections to protect you.</p>
             <p style="color:#f8fafc; margin-top:1.5rem; font-weight:600;">Please access this site over <span style="color:#10b981;">HTTPS</span> or localhost to continue.</p>
           </div>
         </div>
@@ -28,7 +28,7 @@
   // Private GitHub DB Configuration
   const GITHUB_CONFIG = {
     owner: '', // dynamically resolved
-    repo: 'ciphervault-db',
+    repo: 'panthernote-db',
     path: 'vault.json',
     getToken: function () {
       return localStorage.getItem('cipher_gh_token');
@@ -102,7 +102,7 @@
 
     createKeyVerifier: async function (key) {
       const enc = new TextEncoder();
-      const testBuffer = enc.encode("CIPHERVAULT_VERIFY_KEY_OK");
+      const testBuffer = enc.encode("PANTHERNOTE_VERIFY_KEY_OK");
       const iv = this.generateIV();
       const cipher = await window.crypto.subtle.encrypt(
         { name: 'AES-GCM', iv: iv },
@@ -125,7 +125,7 @@
           cipherBuffer
         );
         const dec = new TextDecoder();
-        return dec.decode(decrypted) === "CIPHERVAULT_VERIFY_KEY_OK";
+        return dec.decode(decrypted) === "PANTHERNOTE_VERIFY_KEY_OK";
       } catch (e) {
         return false;
       }
@@ -248,8 +248,8 @@
       // Update DB status card with real user details
       const repoNameEl = document.getElementById('db-repo-name');
       const repoLinkEl = document.getElementById('db-repo-link');
-      const repoUrl = `https://github.com/${data.login}/ciphervault-db`;
-      if (repoNameEl) repoNameEl.textContent = `${data.login}/ciphervault-db`;
+      const repoUrl = `https://github.com/${data.login}/panthernote-db`;
+      if (repoNameEl) repoNameEl.textContent = `${data.login}/panthernote-db`;
       if (repoLinkEl) repoLinkEl.href = repoUrl;
 
       return data.login;
@@ -264,7 +264,7 @@
       const res = await fetch('https://api.github.com/user/repos', {
         method: 'POST',
         headers: this.getHeaders(),
-        body: JSON.stringify({ name: GITHUB_CONFIG.repo, private: true, description: "CipherVault Encrypted Database" })
+        body: JSON.stringify({ name: GITHUB_CONFIG.repo, private: true, description: "PantherNote Encrypted Database" })
       });
       if (!res.ok) throw new Error(`GitHub Create Repo HTTP ${res.status}`);
     },
@@ -681,7 +681,7 @@
         if (DOM.unlockForm) DOM.unlockForm.classList.remove('hidden');
         const titleEl = document.getElementById('auth-title');
         const subEl = document.getElementById('auth-subtitle');
-        if (titleEl) titleEl.textContent = 'CipherVault Login';
+        if (titleEl) titleEl.textContent = 'PantherNote Login';
         if (subEl) subEl.textContent = 'Cached DB Ready';
       } catch(e) {}
     } else {
@@ -730,7 +730,7 @@
       if (DOM.unlockForm) DOM.unlockForm.classList.remove('hidden');
       const titleEl = document.getElementById('auth-title');
       const subEl = document.getElementById('auth-subtitle');
-      if (titleEl) titleEl.textContent = 'CipherVault Login';
+      if (titleEl) titleEl.textContent = 'PantherNote Login';
       if (subEl) subEl.textContent = 'Private GitHub DB Connected';
 
       if (state.masterKey && cached) {
@@ -888,7 +888,7 @@
           sessionStorage.setItem('cipher_active_pass', pass);
           await loadVaultFromGitHub(key);
           unlockVault();
-          showToast(`Unlocked! Synced with Private Repo (ciphervault-db)`, 'success');
+          showToast(`Unlocked! Synced with Private Repo (panthernote-db)`, 'success');
         } else {
           if (DOM.unlockError) DOM.unlockError.classList.remove('hidden');
         }
@@ -4207,7 +4207,7 @@
         vault: encryptedVault
       };
 
-      downloadFile(JSON.stringify(backupObj, null, 2), 'CipherVault_Backup_' + Date.now() + '.json', 'application/json');
+      downloadFile(JSON.stringify(backupObj, null, 2), 'PantherNote_Backup_' + Date.now() + '.json', 'application/json');
       showToast('Encrypted backup exported!', 'success');
     } catch (e) {
       showToast('Export failed!', 'error');
@@ -4226,7 +4226,7 @@
       csv += `"${csvEscape(item.title)}","${csvEscape(item.type)}","${csvEscape(item.username)}","${csvEscape(item.password)}","${csvEscape(item.url)}","${csvEscape(item.notes)}"\n`;
     });
 
-    downloadFile(csv, 'CipherVault_Export_' + Date.now() + '.csv', 'text/csv');
+    downloadFile(csv, 'PantherNote_Export_' + Date.now() + '.csv', 'text/csv');
     showToast('Unencrypted CSV exported!', 'success');
   }
 
@@ -5269,7 +5269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-back-home')?.addEventListener('click', goToHome);
     
     document.getElementById('btn-hero-github')?.addEventListener('click', () => {
-        window.open('https://github.com/sachinmandawi/ciphervault-password-manager', '_blank');
+        window.open('https://github.com/sachinmandawi/panthernote-password-manager', '_blank');
     });
   }
 

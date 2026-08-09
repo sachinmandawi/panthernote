@@ -34,7 +34,7 @@ export async function onRequest(context) {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'User-Agent': 'CipherVault-Worker'
+        'User-Agent': 'PantherNote-Worker'
       },
       body: JSON.stringify({
         client_id: clientId,
