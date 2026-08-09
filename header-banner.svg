@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 200" width="100%" height="100%">
+  <defs>
+    <!-- Dark Glass Gradient Background -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#090d16" />
+    </linearGradient>
+
+    <!-- Purple Pink Neon Title Gradient -->
+    <linearGradient id="title-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c084fc" />
+      <stop offset="50%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+
+    <!-- Subtitle Cyan Gradient -->
+    <linearGradient id="sub-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#818cf8" />
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="purple-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <style>
+    .title-text {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-weight: 900;
+      font-size: 52px;
+      letter-spacing: 4px;
+    }
+    .sub-text {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+    }
+    .tagline-text {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      fill: #94a3b8;
+    }
+
+    /* Pulse Glow Animation */
+    @keyframes pulseGlow {
+      0% { opacity: 0.4; }
+      50% { opacity: 0.95; }
+      100% { opacity: 0.4; }
+    }
+    .glowing-orb {
+      animation: pulseGlow 4s ease-in-out infinite;
+    }
+  </style>
+
+  <!-- Container Box with Rounded Border -->
+  <rect x="5" y="5" width="840" height="190" rx="16" fill="url(#bg-grad)" stroke="#4c1d95" stroke-width="2" />
+  
+  <!-- Glowing Background Accent Orbs -->
+  <circle class="glowing-orb" cx="150" cy="100" r="90" fill="#7c3aed" opacity="0.4" filter="url(#purple-glow)" />
+  <circle class="glowing-orb" cx="700" cy="100" r="70" fill="#ec4899" opacity="0.3" filter="url(#purple-glow)" />
+
+  <!-- Lock Icon Graphic -->
+  <g transform="translate(45, 45)">
+    <!-- Lock Body -->
+    <rect x="20" y="45" width="70" height="60" rx="12" fill="url(#title-grad)" />
+    <!-- Lock Shackle -->
+    <path d="M 35 45 V 30 A 20 20 0 0 1 75 30 V 45" fill="none" stroke="url(#title-grad)" stroke-width="10" stroke-linecap="round" />
+    <!-- Keyhole -->
+    <circle cx="55" cy="70" r="7" fill="#0f172a" />
+    <polygon points="52,72 58,72 60,88 50,88" fill="#0f172a" />
+  </g>
+
+  <!-- Title Text -->
+  <text x="160" y="98" fill="url(#title-grad)" class="title-text">PANTHERNOTE</text>
+  
+  <!-- Subtitle Text -->
+  <text x="162" y="132" fill="url(#sub-grad)" class="sub-text">ZERO-KNOWLEDGE ENCRYPTED PASSWORD MANAGER</text>
+
+  <!-- Tagline Text -->
+  <text x="162" y="160" class="tagline-text">🔒 AES-256-GCM Local Security &amp; Private GitHub DB Sync</text>
+</svg>

@@ -1,9 +1,9 @@
 <div align="center">
 
-  <!-- Animated Header Banner -->
-  <a href="https://readme-typing-svg.demolab.com">
-    <img src="https://readme-typing-svg.demolab.com?font=Outfit&size=38&pause=1000&color=8B5CF6&center=true&vCenter=true&width=700&height=70&lines=🐾+PANTHERNOTE;🔒+Zero-Knowledge+Password+Manager;🛡️+AES-256-GCM+Local+Encryption;⚡+Private+GitHub+DB+Sync" alt="PantherNote Header" />
-  </a>
+  <!-- Native SVG Header Banner -->
+  <p align="center">
+    <img src="header-banner.svg" alt="PantherNote Header Banner" width="100%" />
+  </p>
 
   <p align="center">
     <strong>Your digital life, locked and local.</strong>
