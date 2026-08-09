@@ -125,7 +125,8 @@
           cipherBuffer
         );
         const dec = new TextDecoder();
-        return dec.decode(decrypted) === "PANTHERNOTE_VERIFY_KEY_OK";
+        const text = dec.decode(decrypted);
+        return text === "PANTHERNOTE_VERIFY_KEY_OK" || text === "CIPHERVAULT_VERIFY_KEY_OK";
       } catch (e) {
         return false;
       }
