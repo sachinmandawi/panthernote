@@ -103,15 +103,11 @@ flowchart TD
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/sachinmandawi/panthernote.git
 cd panthernote
-
-# 2. Serve locally
-python -m http.server 8000
 ```
 
 ---
