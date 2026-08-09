@@ -3707,7 +3707,7 @@ html, body {
   outline: none !important;
   background: transparent !important;
   font-size: 0.9em;
-  color: var(--text-color) !important;
+  color: var(--text-main) !important;
   caret-color: rgb(255, 81, 0);
 }
 
