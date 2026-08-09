@@ -13,7 +13,7 @@
     <a href="https://github.com/sachinmandawi/panthernote/stargazers"><img src="https://img.shields.io/github/stars/sachinmandawi/panthernote?style=for-the-badge&color=8b5cf6&logo=github" alt="Stars"></a>
     <a href="https://github.com/sachinmandawi/panthernote/network/members"><img src="https://img.shields.io/github/forks/sachinmandawi/panthernote?style=for-the-badge&color=6366f1&logo=github" alt="Forks"></a>
     <a href="https://github.com/sachinmandawi/panthernote/blob/main/LICENSE"><img src="https://img.shields.io/github/license/sachinmandawi/panthernote?style=for-the-badge&color=10b981" alt="License"></a>
-    <a href="https://ciphervault.pages.dev"><img src="https://img.shields.io/badge/Deployment-Cloudflare_Pages-f38020?style=for-the-badge&logo=cloudflare" alt="Cloudflare Pages"></a>
+    <a href="https://panthernote.pages.dev"><img src="https://img.shields.io/badge/Deployment-Cloudflare_Pages-f38020?style=for-the-badge&logo=cloudflare" alt="Cloudflare Pages"></a>
   </p>
 
   <p align="center">
