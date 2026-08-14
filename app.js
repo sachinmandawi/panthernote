@@ -5288,6 +5288,14 @@
     window.state = state;
     window.renderVault = renderVault;
     window.handleDropReorder = handleDropReorder;
+    window.CryptoEngine = CryptoEngine;
+    window.TOTPEngine = TOTPEngine;
+    window.Generator = Generator;
+    window.getIconHtml = getIconHtml;
+    window.getFilteredAndSortedItems = getFilteredAndSortedItems;
+    window.updateCountsAndStats = updateCountsAndStats;
+    window.updateBulkActionToolbar = updateBulkActionToolbar;
+    window.lockVault = lockVault;
     window.testState = state;
     window.testRenderVault = renderVault;
   }
