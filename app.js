@@ -4501,23 +4501,21 @@
     }
   };
 
-  // --- EXPORT & IMPORT ---
-  async function exportEncryptedBackup() {
+  // --- EXPORT & RESTORE ---
+  function exportEncryptedBackup() {
     try {
-      const vaultData = { items: state.vaultItems, customOrders: state.customOrders };
-      const encryptedVault = await CryptoEngine.encryptData(vaultData, state.masterKey);
       const backupObj = {
-        version: '1.0',
+        version: '1.0.0',
         exportedAt: new Date().toISOString(),
-        salt: state.saltBase64,
-        verifier: state.verifierObj,
-        vault: encryptedVault
+        items: state.vaultItems || [],
+        categories: state.customCategories || [],
+        customOrders: state.customOrders || {}
       };
 
       downloadFile(JSON.stringify(backupObj, null, 2), 'PantherNote_Backup_' + Date.now() + '.json', 'application/json');
-      showToast('Encrypted backup exported!', 'success');
+      showToast('Vault backup (.json) exported successfully!', 'success');
     } catch (e) {
-      showToast('Export failed!', 'error');
+      showToast('Export failed: ' + e.message, 'error');
     }
   }
 
