@@ -11,8 +11,13 @@
 
   <p align="center">
     <a href="https://sachinmandawi.github.io/panthernote/"><img src="https://img.shields.io/badge/🚀_Live_Web_App-sachinmandawi.github.io%2Fpanthernote-8b5cf6?style=for-the-badge&logo=rocket" alt="Live App"></a>
+    <a href="https://github.com/sachinmandawi/panthernote/releases/download/v1.0.0/PantherNote-Setup-1.0.0.exe"><img src="https://img.shields.io/badge/📥_Download-Windows_Installer_(.exe)-2563eb?style=for-the-badge&logo=windows" alt="Download Windows Installer"></a>
+    <a href="https://github.com/sachinmandawi/panthernote/releases/download/v1.0.0/PantherNote-Portable.exe"><img src="https://img.shields.io/badge/⚡_Download-Portable_EXE-059669?style=for-the-badge&logo=windows" alt="Download Portable EXE"></a>
+  </p>
+
+  <p align="center">
+    <a href="https://github.com/sachinmandawi/panthernote/releases/latest"><img src="https://img.shields.io/github/v/release/sachinmandawi/panthernote?style=for-the-badge&color=8b5cf6&logo=github" alt="Latest Release"></a>
     <a href="https://github.com/sachinmandawi/panthernote/stargazers"><img src="https://img.shields.io/github/stars/sachinmandawi/panthernote?style=for-the-badge&color=8b5cf6&logo=github" alt="Stars"></a>
-    <a href="https://github.com/sachinmandawi/panthernote/network/members"><img src="https://img.shields.io/github/forks/sachinmandawi/panthernote?style=for-the-badge&color=6366f1&logo=github" alt="Forks"></a>
     <a href="https://github.com/sachinmandawi/panthernote/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-10b981?style=for-the-badge" alt="License"></a>
   </p>
 
