@@ -391,7 +391,7 @@
   };
 
   // --- STATE MANAGEMENT ---
-  const state = {
+  const state = window.state = {
     masterKey: null,
     vaultItems: [],
     currentCategory: 'all',
@@ -408,6 +408,7 @@
     totpTimer: null,
     isSyncBroken: false,
     customCategories: [],
+    customOrders: {},
     selectedItemIds: new Set()
   };
 
@@ -1707,6 +1708,7 @@
   })();
 
   async function handleDropReorder(draggedId, targetId) {
+    window.handleDropReorder = handleDropReorder;
     const container = DOM.itemsContainer;
     const cards = Array.from(container.querySelectorAll('.item-card'));
     
@@ -2006,6 +2008,7 @@
 
   // --- RENDER VAULT ITEMS ---
   async function renderVault() {
+    window.renderVault = renderVault;
     const items = getFilteredAndSortedItems();
     updateCountsAndStats();
     updateBulkActionToolbar();
@@ -2647,7 +2650,7 @@
         } else if (state.currentCategory !== 'all') {
           viewKey = 'category:' + state.currentCategory;
         }
-        const orderList = state.customOrders[viewKey] || [];
+        const orderList = (state.customOrders && state.customOrders[viewKey]) ? state.customOrders[viewKey] : [];
         let idxA = orderList.indexOf(String(a.id));
         let idxB = orderList.indexOf(String(b.id));
         if (idxA === -1) idxA = 999999;
@@ -5281,7 +5284,10 @@
     await checkMasterStatus();
     updateGeneratorView();
     
-    // --- TEST HOOKS (DO NOT COMMIT) ---
+    // Global state and methods for testing and external bindings
+    window.state = state;
+    window.renderVault = renderVault;
+    window.handleDropReorder = handleDropReorder;
     window.testState = state;
     window.testRenderVault = renderVault;
   }
