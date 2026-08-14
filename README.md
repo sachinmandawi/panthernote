@@ -6,7 +6,7 @@
   </a>
 
   <p align="center">
-    <strong>🔒 A lightning-fast, local-first digital vault for credentials, debit cards, 2FA codes, and notes.</strong>
+    <strong>🗄️ Securely manage Logins, Debit Cards, Bank Accounts, Notes, and 2FA Authenticator codes in one unified local-first software and private GitHub sync.</strong>
   </p>
 
   <p align="center">
