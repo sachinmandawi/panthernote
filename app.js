@@ -2008,6 +2008,7 @@
         }
         card.dataset.isDragging = 'true';
         card.classList.add('dragging');
+        window._draggedCardElement = card;
         if (e.dataTransfer) {
           e.dataTransfer.setData('text/plain', String(item.id));
           e.dataTransfer.effectAllowed = 'move';
@@ -2016,6 +2017,8 @@
       
       card.addEventListener('dragend', (e) => {
         card.classList.remove('dragging');
+        DragAutoScroller.stop();
+        window._draggedCardElement = null;
         document.querySelectorAll('.item-card').forEach(c => c.classList.remove('drag-over'));
         setTimeout(() => { delete card.dataset.isDragging; }, 150);
       });
@@ -2024,6 +2027,7 @@
         e.preventDefault();
         if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
         card.classList.add('drag-over');
+        DragAutoScroller.update(e.clientY, card);
       });
       
       card.addEventListener('dragleave', (e) => {
@@ -2034,6 +2038,8 @@
       
       card.addEventListener('drop', (e) => {
         e.preventDefault();
+        DragAutoScroller.stop();
+        window._draggedCardElement = null;
         card.classList.remove('drag-over');
         const draggedId = e.dataTransfer ? e.dataTransfer.getData('text/plain') : '';
         if (draggedId && draggedId !== String(item.id)) {
@@ -2075,6 +2081,7 @@
 
         if (e.cancelable) e.preventDefault();
 
+        DragAutoScroller.update(touch.clientY, card);
         const elem = document.elementFromPoint(touch.clientX, touch.clientY);
         if (elem) {
           const targetCard = elem.closest('.item-card');
@@ -2091,6 +2098,7 @@
 
       card.addEventListener('touchend', () => {
         clearTimeout(touchTimer);
+        DragAutoScroller.stop();
         if (touchDragged) {
           card.classList.remove('dragging');
           document.querySelectorAll('.item-card').forEach(c => c.classList.remove('drag-over'));
@@ -5271,4 +5279,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     window.addEventListener('touchmove', function() {}, {passive: false});
   }
+});
+
+
+// Global DragOver listener for smooth auto-scrolling anywhere in viewport
+document.addEventListener('dragover', (e) => {
+  if (window._draggedCardElement) {
+    DragAutoScroller.update(e.clientY, window._draggedCardElement);
+  }
+});
+document.addEventListener('dragend', () => {
+  DragAutoScroller.stop();
+  window._draggedCardElement = null;
+});
+document.addEventListener('drop', () => {
+  DragAutoScroller.stop();
+  window._draggedCardElement = null;
 });
