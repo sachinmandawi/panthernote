@@ -1,4 +1,5 @@
 <div align="center">
+
   <!-- Animated Typing SVG Header Banner -->
   <a href="https://sachinmandawi.github.io/panthernote/">
     <img src="https://readme-typing-svg.demolab.com?font=Outfit&weight=700&size=38&duration=3000&pause=1000&color=8B5CF6&center=true&vCenter=true&width=800&height=70&lines=PantherNote;Zero-Knowledge+Password+Manager;Local-First+AES-256-GCM+Encryption;Private+GitHub+DB+Vault+Sync;Built-in+2FA+Authenticator" alt="PantherNote Animated Title" />
@@ -17,12 +18,13 @@
 
   <p align="center">
     <a href="#-about-panthernote"><strong>About</strong></a> •
+    <a href="#-application-screenshots--ui-showcase"><strong>Screenshots</strong></a> •
     <a href="#-key-features"><strong>Features</strong></a> •
     <a href="#-security-architecture"><strong>Security Specs</strong></a> •
     <a href="#-tech-stack"><strong>Tech Stack</strong></a> •
-    <a href="#-quick-start"><strong>Quick Start</strong></a> •
     <a href="#-license"><strong>License</strong></a>
   </p>
+
 </div>
 
 ---
@@ -41,6 +43,52 @@ Traditional cloud password managers store user vaults on proprietary servers tha
 - **Zero Centralized Servers**: Your encrypted ciphertext syncs directly to your own private GitHub repository (<code>panthernote-db</code>). Nobody—not even GitHub—can read your data without your master password.
 - **True Zero-Knowledge**: Your master password never leaves your browser memory. Encryption keys are derived client-side via **PBKDF2 SHA-256** with **100,000 iterations**.
 - **All-in-One Identity Vault**: Seamlessly manage **Logins**, **Debit & Credit Cards (with interactive 3D flip preview)**, **Bank Accounts**, **Secure Notes**, **Custom Categories**, and **Live 2FA TOTP Authenticator Codes**.
+
+---
+
+## 📸 Application Screenshots & UI Showcase
+
+<div align="center">
+
+### 1️⃣ Main Vault & Credentials Overview
+<img src="screenshots/1-All%20Items.png" alt="All Items Overview" width="95%" />
+
+<br />
+
+### 2️⃣ 3D Interactive Debit & Credit Cards
+<img src="screenshots/2-Debit%20Cards.png" alt="Debit Cards" width="95%" />
+
+<br />
+
+### 3️⃣ Built-in Live 2FA TOTP Authenticator
+<img src="screenshots/3-2FA%20Authenticator.png" alt="2FA Authenticator" width="95%" />
+
+<br />
+
+### 4️⃣ Smart Password & Passphrase Generator
+<img src="screenshots/4-Generator.png" alt="Password Generator" width="95%" />
+
+<br />
+
+### 5️⃣ Security & Health Audit Scanner
+<img src="screenshots/5-Health%20Audit.png" alt="Health Audit" width="95%" />
+
+<br />
+
+### 6️⃣ Settings, Encryption Keys & Backup Options
+<img src="screenshots/6-Settings%20and%20Backup.png" alt="Settings and Backup" width="95%" />
+
+<br />
+
+### 7️⃣ Zero-Knowledge Master Password Unlock Screen
+<img src="screenshots/7-Login%20Screen.png" alt="Login Screen" width="95%" />
+
+<br />
+
+### 8️⃣ Add New Vault Item Modal (Logins, Cards, Banks, Notes)
+<img src="screenshots/8-Add%20New%20Vault%20Item.png" alt="Add New Vault Item" width="95%" />
+
+</div>
 
 ---
 
@@ -125,6 +173,7 @@ flowchart TD
 
 ## 🚀 Quick Start
 
+### 1. Clone the repository
 ```bash
 git clone https://github.com/sachinmandawi/panthernote.git
 cd panthernote
