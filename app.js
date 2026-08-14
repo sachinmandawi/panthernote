@@ -4590,14 +4590,92 @@
     reader.readAsText(file);
   }
 
-  async function wipeVaultData() {
-    if (confirm('WARNING: Are you completely sure? This will delete all encrypted passwords and reset your master password!')) {
-      localStorage.clear();
-      // sessionStorage.clear(); // Removed as session keys are now in localStorage
-      state.masterKey = null;
+    async function wipeVaultData() {
+    const selectedRadio = document.querySelector('input[name="danger-purge-target"]:checked');
+    const target = selectedRadio ? selectedRadio.value : 'local';
+
+    if (target === 'local') {
+      if (!confirm('Are you sure you want to delete all LOCAL vault data from this device?')) return;
+      localStorage.removeItem('cipher_local_vault_items');
+      localStorage.removeItem('cipher_custom_categories');
+      localStorage.removeItem('cipher_custom_orders');
       state.vaultItems = [];
-      location.reload();
+      state.customCategories = [];
+      state.customOrders = {};
+      await renderVault();
+      showToast('Local vault data permanently deleted', 'info');
+    } else if (target === 'github') {
+      const token = localStorage.getItem('cipher_gh_token');
+      const username = localStorage.getItem('cipher_gh_username') || 'sachinmandawi';
+      if (!token) {
+        showToast('GitHub is not connected. Nothing to delete on GitHub.', 'warning');
+        return;
+      }
+      if (!confirm('Are you sure you want to delete vault.json in your GitHub private repo (panthernote-db)?')) return;
+
+      try {
+        const vaultPayload = { version: '1.0.0', updatedAt: Date.now(), items: [], categories: [], customOrders: {} };
+        const contentStr = JSON.stringify(vaultPayload, null, 2);
+        const contentBase64 = btoa(unescape(encodeURIComponent(contentStr)));
+
+        await fetch(`https://api.github.com/repos/${username}/panthernote-db/contents/vault.json`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: `wipe vault: ${new Date().toISOString()}`,
+            content: contentBase64,
+            sha: state.fileSha || undefined
+          })
+        });
+
+        showToast('GitHub cloud backup wiped successfully', 'info');
+      } catch (e) {
+        showToast('Failed to wipe GitHub backup: ' + e.message, 'error');
+      }
+    } else if (target === 'both') {
+      if (!confirm('⚠️ WARNING: Are you sure you want to FULLY PURGE everything from BOTH Local Storage AND GitHub?')) return;
+      
+      const token = localStorage.getItem('cipher_gh_token');
+      const username = localStorage.getItem('cipher_gh_username') || 'sachinmandawi';
+      if (token) {
+        try {
+          const vaultPayload = { version: '1.0.0', updatedAt: Date.now(), items: [], categories: [], customOrders: {} };
+          const contentStr = JSON.stringify(vaultPayload, null, 2);
+          const contentBase64 = btoa(unescape(encodeURIComponent(contentStr)));
+          await fetch(`https://api.github.com/repos/${username}/panthernote-db/contents/vault.json`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: `full purge: ${new Date().toISOString()}`,
+              content: contentBase64,
+              sha: state.fileSha || undefined
+            })
+          });
+        } catch (e) {}
+      }
+
+      localStorage.removeItem('cipher_local_vault_items');
+      localStorage.removeItem('cipher_custom_categories');
+      localStorage.removeItem('cipher_custom_orders');
+      state.vaultItems = [];
+      state.customCategories = [];
+      state.customOrders = {};
+      await renderVault();
+      showToast('Full vault purge completed (Local + GitHub wiped)', 'info');
     }
+
+    const confirmInput = document.getElementById('danger-wipe-confirm-input');
+    const wipeBtn = document.getElementById('btn-danger-wipe');
+    if (confirmInput) confirmInput.value = '';
+    if (wipeBtn) wipeBtn.disabled = true;
   }
 
   function setupCollapsibleHeaders() {
