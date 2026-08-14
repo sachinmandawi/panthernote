@@ -23,6 +23,7 @@
 
   <p align="center">
     <a href="#-about-panthernote"><strong>About</strong></a> •
+    <a href="#-application-screenshots--ui-showcase"><strong>Screenshots</strong></a> •
     <a href="#-key-features"><strong>Features</strong></a> •
     <a href="#-how-it-works"><strong>Architecture</strong></a> •
     <a href="#-tech-stack"><strong>Tech Stack</strong></a> •
@@ -50,6 +51,47 @@ Traditional cloud password managers force users through tedious login barriers, 
 - **☁️ Frictionless Private Cloud Backup**: Connect your private GitHub repository (<code>panthernote-db</code>) anytime by simply pasting a Personal Access Token (PAT) in Settings. Zero browser cookie conflicts or OAuth redirect loops.
 - **🔑 Built-in 2FA Authenticator**: Replace standalone authenticator apps with an integrated live RFC 6238 TOTP generator featuring 30-second countdown ring timers.
 - **💳 3D Interactive Card Vault**: Manage debit and credit cards with realistic interactive 3D flip previews, CVV masking, and 1-tap copy tools.
+
+---
+
+## 📸 Application Screenshots & UI Showcase
+
+<div align="center">
+
+### 1️⃣ Main Vault & Credentials Overview
+<img src="screenshots/1-All%20Items.png" alt="All Items Overview" width="95%" />
+
+<br />
+
+### 2️⃣ 3D Interactive Debit & Credit Cards
+<img src="screenshots/2-Debit%20Cards.png" alt="Debit Cards" width="95%" />
+
+<br />
+
+### 3️⃣ Built-in Live 2FA TOTP Authenticator
+<img src="screenshots/3-2FA%20Authenticator.png" alt="2FA Authenticator" width="95%" />
+
+<br />
+
+### 4️⃣ Smart Password & Passphrase Generator
+<img src="screenshots/4-Generator.png" alt="Password Generator" width="95%" />
+
+<br />
+
+### 5️⃣ Security & Health Audit Scanner
+<img src="screenshots/5-Health%20Audit.png" alt="Health Audit" width="95%" />
+
+<br />
+
+### 6️⃣ Settings, GitHub Cloud Sync & Backup Options
+<img src="screenshots/6-Settings%20and%20Backup.png" alt="Settings and Backup" width="95%" />
+
+<br />
+
+### 7️⃣ Add New Vault Item Modal (Logins, Cards, Banks, Notes)
+<img src="screenshots/7-Add%20New%20Vault%20Item.png" alt="Add New Vault Item" width="95%" />
+
+</div>
 
 ---
 
