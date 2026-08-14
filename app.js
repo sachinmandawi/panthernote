@@ -5174,15 +5174,16 @@
     const btnManualSync = document.getElementById('btn-manual-sync');
     if (btnManualSync) {
       btnManualSync.addEventListener('click', async () => {
-        if (!state.masterKey) {
-          showToast('Please unlock vault first', 'warning');
+        const token = localStorage.getItem('cipher_gh_token');
+        if (!token) {
+          showToast('Please connect GitHub with a token in Settings first', 'warning');
           return;
         }
         btnManualSync.disabled = true;
         btnManualSync.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Syncing...`;
-        await saveVaultToGitHub();
+        await syncVaultToGitHub(false);
         btnManualSync.disabled = false;
-        btnManualSync.innerHTML = `<i class="fa-solid fa-rotate"></i> Force Manual Sync with GitHub`;
+        btnManualSync.innerHTML = `<i class="fa-solid fa-rotate"></i> Sync Now 🔄`;
       });
     }
 
@@ -5750,6 +5751,8 @@
     window.updateBulkActionToolbar = updateBulkActionToolbar;
     window.lockVault = lockVault;
     window.testState = state;
+    window.updateGitHubSyncStatusUI = updateGitHubSyncStatusUI;
+    window.syncVaultToGitHub = syncVaultToGitHub;
     window.testRenderVault = renderVault;
   }
 
