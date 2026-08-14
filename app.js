@@ -944,7 +944,221 @@
     }
   }
 
+  
+  // --- LOCAL STORAGE PERSISTENCE & OPTIONAL GITHUB SYNC ---
+  function saveLocalData() {
+    try {
+      if (state.vaultItems) {
+        localStorage.setItem('cipher_local_vault_items', JSON.stringify(state.vaultItems));
+      }
+      if (state.customCategories) {
+        localStorage.setItem('cipher_custom_categories', JSON.stringify(state.customCategories));
+      }
+      if (state.customOrders) {
+        localStorage.setItem('cipher_custom_orders', JSON.stringify(state.customOrders));
+      }
+    } catch (e) {
+      console.error('Error saving local vault:', e);
+    }
+  }
+
+  async function syncVaultToGitHub(silent = false) {
+    const token = localStorage.getItem('cipher_gh_token');
+    if (!token) return;
+
+    try {
+      const username = localStorage.getItem('cipher_gh_username') || 'sachinmandawi';
+      const repoName = 'panthernote-db';
+      const filePath = 'vault.json';
+
+      // 1. Get existing file sha if not already known
+      let sha = state.fileSha;
+      const getRes = await fetch(`https://api.github.com/repos/${username}/${repoName}/contents/${filePath}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      if (getRes.ok) {
+        const fileData = await getRes.json();
+        sha = fileData.sha;
+        state.fileSha = sha;
+      }
+
+      // 2. Prepare payload
+      const vaultPayload = {
+        version: '1.0.0',
+        updatedAt: Date.now(),
+        items: state.vaultItems || [],
+        categories: state.customCategories || [],
+        customOrders: state.customOrders || {}
+      };
+
+      const contentStr = JSON.stringify(vaultPayload, null, 2);
+      const contentBase64 = btoa(unescape(encodeURIComponent(contentStr)));
+
+      const putRes = await fetch(`https://api.github.com/repos/${username}/${repoName}/contents/${filePath}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `vault sync: ${new Date().toISOString()}`,
+          content: contentBase64,
+          sha: sha || undefined
+        })
+      });
+
+      if (putRes.ok) {
+        const putData = await putRes.json();
+        if (putData && putData.content) state.fileSha = putData.content.sha;
+        updateLastSyncTimeUI();
+        if (!silent) showToast('Synced to GitHub successfully!', 'success');
+      }
+    } catch (err) {
+      console.warn('Background GitHub sync error:', err);
+      if (!silent) showToast('Sync failed: Check network/token', 'error');
+    }
+  }
+
   async function saveVaultToGitHub() {
+    saveLocalData();
+    await syncVaultToGitHub(true);
+  }
+
+  function updateLastSyncTimeUI() {
+    const timeEl = document.getElementById('db-last-sync-time');
+    if (timeEl) {
+      timeEl.innerHTML = `Last Synced: <strong style="color:#f8fafc;">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</strong>`;
+    }
+  }
+
+  function updateGitHubSyncStatusUI() {
+    const token = localStorage.getItem('cipher_gh_token');
+    const username = localStorage.getItem('cipher_gh_username');
+
+    const connectedPanel = document.getElementById('gh-sync-connected-panel');
+    const tokenPanel = document.getElementById('gh-sync-token-panel');
+    const statusDot = document.getElementById('db-status-dot');
+    const statusBadge = document.getElementById('db-status-badge');
+    const accountUserEl = document.getElementById('db-account-username');
+    const repoLinkEl = document.getElementById('db-repo-link');
+    const repoNameEl = document.getElementById('db-repo-name');
+
+    if (token && username) {
+      if (connectedPanel) connectedPanel.classList.remove('hidden');
+      if (tokenPanel) tokenPanel.classList.add('hidden');
+      if (statusDot) { statusDot.className = 'status-dot green'; statusDot.style.background = '#10b981'; }
+      if (statusBadge) {
+        statusBadge.className = 'badge-pill strong';
+        statusBadge.style.cssText = 'background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:0.4rem 0.85rem; font-size:0.8rem;';
+        statusBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> SYNCED TO GITHUB';
+      }
+      if (accountUserEl) accountUserEl.textContent = `@${username}`;
+      if (repoNameEl) repoNameEl.textContent = `${username}/panthernote-db`;
+      if (repoLinkEl) repoLinkEl.href = `https://github.com/${username}/panthernote-db`;
+    } else {
+      if (connectedPanel) connectedPanel.classList.add('hidden');
+      if (tokenPanel) tokenPanel.classList.remove('hidden');
+      if (statusDot) { statusDot.className = 'status-dot'; statusDot.style.background = '#64748b'; }
+      if (statusBadge) {
+        statusBadge.className = 'badge-pill';
+        statusBadge.style.cssText = 'background:rgba(100,116,139,0.2); color:#94a3b8; border:1px solid rgba(100,116,139,0.3); padding:0.4rem 0.85rem; font-size:0.8rem;';
+        statusBadge.innerHTML = '<i class="fa-solid fa-hard-drive"></i> LOCAL STORAGE ONLY';
+      }
+    }
+  }
+
+  async function handleConnectGitHubToken() {
+    const input = document.getElementById('input-gh-token');
+    const token = input ? input.value.trim() : '';
+
+    if (!token || token.length < 15) {
+      showToast('Please enter a valid GitHub Token (ghp_...)', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('btn-connect-gh-token');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting...';
+    }
+
+    try {
+      // 1. Verify User
+      const userRes = await fetch('https://api.github.com/user', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      if (!userRes.ok) {
+        throw new Error('Invalid GitHub Token or permission denied');
+      }
+
+      const userData = await userRes.json();
+      const username = userData.login;
+
+      // 2. Check or Create panthernote-db private repo
+      const repoCheck = await fetch(`https://api.github.com/repos/${username}/panthernote-db`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      if (repoCheck.status === 404) {
+        // Create repo
+        await fetch('https://api.github.com/user/repos', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: 'panthernote-db',
+            description: 'PantherNote Encrypted Password & Vault Database',
+            private: true,
+            auto_init: true
+          })
+        });
+      }
+
+      localStorage.setItem('cipher_gh_token', token);
+      localStorage.setItem('cipher_gh_username', username);
+
+      if (input) input.value = '';
+      updateGitHubSyncStatusUI();
+      showToast(`Connected to @${username}!`, 'success');
+
+      // Sync immediately
+      await syncVaultToGitHub(false);
+    } catch (err) {
+      showToast(err.message || 'Failed to connect GitHub', 'error');
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-plug"></i> Connect & Sync';
+      }
+    }
+  }
+
+  function handleDisconnectGitHub() {
+    if (confirm('Disconnect GitHub Cloud Sync? Your data will remain 100% safe in local storage.')) {
+      localStorage.removeItem('cipher_gh_token');
+      localStorage.removeItem('cipher_gh_username');
+      updateGitHubSyncStatusUI();
+      showToast('Switched to Local Storage mode', 'info');
+    }
+  }
+
+  // Deprecated old save
+  async function _deprecatedSave() {
     if (!state.masterKey) return;
     if (state.isSyncBroken) {
       showToast('CRITICAL: Sync disabled due to a previous load error to prevent data loss. Please refresh the page.', 'error');
@@ -4453,18 +4667,58 @@
     if (DOM.unlockForm) DOM.unlockForm.addEventListener('submit', handleUnlock);
     if (DOM.btnLockNow) DOM.btnLockNow.addEventListener('click', lockVault);
     
+    // --- OPTION B: SWITCH GITHUB ACCOUNT MODAL HANDLERS ---
+    const switchModal = document.getElementById('modal-switch-github');
+    const btnLogoutStep = document.getElementById('btn-gh-logout-step');
+    const btnAuthStep = document.getElementById('btn-gh-auth-step');
+    const btnCancelSwitch = document.getElementById('btn-cancel-gh-switch');
+    const btnCloseSwitchX = document.getElementById('btn-close-gh-switch-x');
+
+    function openSwitchGithubModal() {
+      if (switchModal) {
+        switchModal.classList.remove('hidden');
+        switchModal.style.display = 'flex';
+      }
+    }
+
+    function closeSwitchGithubModal() {
+      if (switchModal) {
+        switchModal.classList.add('hidden');
+        switchModal.style.display = 'none';
+      }
+    }
+
     document.querySelectorAll('.btn-switch-github').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (confirm("Are you sure you want to switch GitHub accounts? This will clear your current local session.")) {
-          localStorage.removeItem('cipher_gh_token');
-          localStorage.removeItem('cipher_offline_vault');
-          localStorage.removeItem('cipher_offline_sha');
-          localStorage.removeItem('cipher_active_pass');
-          sessionStorage.removeItem('cipher_active_pass');
-          window.location.reload();
+      btn.addEventListener('click', openSwitchGithubModal);
+    });
+
+    if (btnCancelSwitch) btnCancelSwitch.addEventListener('click', closeSwitchGithubModal);
+    if (btnCloseSwitchX) btnCloseSwitchX.addEventListener('click', closeSwitchGithubModal);
+
+    if (btnLogoutStep) {
+      btnLogoutStep.addEventListener('click', () => {
+        window.open('https://github.com/logout', '_blank');
+        btnLogoutStep.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Step 1 Opened (Sign out done? Proceed to Step 2)';
+        if (btnAuthStep) {
+          btnAuthStep.style.boxShadow = '0 0 20px rgba(139, 92, 246, 0.6)';
         }
       });
-    });
+    }
+
+    if (btnAuthStep) {
+      btnAuthStep.addEventListener('click', () => {
+        // Clear previous token & caches
+        localStorage.removeItem('cipher_gh_token');
+        localStorage.removeItem('cipher_offline_vault');
+        localStorage.removeItem('cipher_offline_sha');
+        localStorage.removeItem('cipher_active_pass');
+        sessionStorage.removeItem('cipher_active_pass');
+        sessionStorage.setItem('cipher_ui_state', 'login');
+
+        // Redirect to OAuth with consent prompt
+        window.location.href = 'https://github.com/login/oauth/authorize?client_id=Ov23liz8eHtIME9yWMyj&scope=repo&prompt=consent&redirect_uri=https://panthernote-gatekeeper.smandavi2003.workers.dev/';
+      });
+    }
 
     // Dashboard Stat Cards Click Handlers
     const cardStatTotal = document.getElementById('card-stat-total');
@@ -5281,8 +5535,53 @@
       });
     }
     
-    await checkMasterStatus();
+    // Load Local-First Vault Data immediately
+    try {
+      const localData = localStorage.getItem('cipher_local_vault_items');
+      if (localData) {
+        state.vaultItems = JSON.parse(localData);
+      } else {
+        const offlineVault = localStorage.getItem('cipher_offline_vault');
+        if (offlineVault) {
+          try { state.vaultItems = JSON.parse(offlineVault); } catch (e) {}
+        }
+      }
+      if (!Array.isArray(state.vaultItems)) state.vaultItems = [];
+
+      const savedCats = localStorage.getItem('cipher_custom_categories');
+      if (savedCats) state.customCategories = JSON.parse(savedCats);
+      if (!Array.isArray(state.customCategories)) state.customCategories = [];
+
+      const savedOrders = localStorage.getItem('cipher_custom_orders');
+      if (savedOrders) state.customOrders = JSON.parse(savedOrders);
+      if (!state.customOrders) state.customOrders = {};
+    } catch (e) {
+      console.warn('Error loading local vault:', e);
+      state.vaultItems = [];
+    }
+
+    // Bypass auth barriers & render directly
+    document.getElementById('auth-overlay')?.classList.remove('active');
+    document.getElementById('landing-page')?.classList.remove('active');
+    document.querySelector('.app-container')?.classList.remove('blur-content');
+    
+    // Bind Settings Cloud Sync UI
+    document.getElementById('btn-connect-gh-token')?.addEventListener('click', handleConnectGitHubToken);
+    document.getElementById('btn-disconnect-gh')?.addEventListener('click', handleDisconnectGitHub);
+    document.getElementById('btn-manual-sync')?.addEventListener('click', () => syncVaultToGitHub(false));
+    document.getElementById('btn-toggle-token-vis')?.addEventListener('click', () => {
+      const inp = document.getElementById('input-gh-token');
+      if (inp) inp.type = inp.type === 'password' ? 'text' : 'password';
+    });
+
+    updateGitHubSyncStatusUI();
+    await renderVault();
     updateGeneratorView();
+
+    // Auto sync in background if token exists
+    if (localStorage.getItem('cipher_gh_token')) {
+      syncVaultToGitHub(true);
+    }
     
     // Global state and methods for testing and external bindings
     window.state = state;
@@ -5303,64 +5602,18 @@
   document.addEventListener('DOMContentLoaded', init);
 })();
 
-// --- LANDING PAGE LOGIC ---
+// --- LANDING PAGE & DIRECT LAUNCH LOGIC ---
 document.addEventListener('DOMContentLoaded', () => {
   const landingPage = document.getElementById('landing-page');
   const authOverlay = document.getElementById('auth-overlay');
   
-  if (landingPage && authOverlay) {
-    const uiState = sessionStorage.getItem('cipher_ui_state');
-    const hasData = localStorage.getItem('cipher_offline_vault');
-    
-    if (uiState === 'login') {
-      landingPage.classList.remove('active');
-      authOverlay.classList.add('active');
-    } else if (uiState === 'landing') {
-      landingPage.classList.add('active');
-      authOverlay.classList.remove('active');
-    } else {
-      if (hasData) {
-        landingPage.classList.remove('active');
-        authOverlay.classList.add('active');
-        sessionStorage.setItem('cipher_ui_state', 'login');
-      } else {
-        landingPage.classList.add('active');
-        authOverlay.classList.remove('active');
-        sessionStorage.setItem('cipher_ui_state', 'landing');
-      }
-    }
-    
-    // Hide FOUC shield after resolving initial view
-    setTimeout(() => {
-      const shield = document.getElementById('fouc-shield');
-      if (shield) {
-        shield.style.opacity = '0';
-        setTimeout(() => shield.remove(), 200);
-      }
-    }, 10);
+  if (landingPage) landingPage.classList.remove('active');
+  if (authOverlay) authOverlay.classList.remove('active');
+  document.querySelector('.app-container')?.classList.remove('blur-content');
 
-    const goToAuth = () => {
-      landingPage.classList.remove('active');
-      authOverlay.classList.add('active');
-      sessionStorage.setItem('cipher_ui_state', 'login');
-    };
-    
-    const goToHome = () => {
-      authOverlay.classList.remove('active');
-      landingPage.classList.add('active');
-      sessionStorage.setItem('cipher_ui_state', 'landing');
-    };
-
-    document.getElementById('btn-landing-login')?.addEventListener('click', goToAuth);
-    document.getElementById('btn-landing-cta')?.addEventListener('click', goToAuth);
-    document.getElementById('btn-hero-cta')?.addEventListener('click', goToAuth);
-    
-    document.getElementById('btn-back-home')?.addEventListener('click', goToHome);
-    
-    document.getElementById('btn-hero-github')?.addEventListener('click', () => {
-        window.open('https://github.com/sachinmandawi/panthernote-password-manager', '_blank');
-    });
-  }
+  // Hide FOUC shield immediately
+  const shield = document.getElementById('fouc-shield');
+  if (shield) shield.remove();
 
   // Mobile Drag and Drop Polyfill Init
   if (typeof MobileDragDrop !== 'undefined' && MobileDragDrop.polyfill) {

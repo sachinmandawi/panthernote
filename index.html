@@ -27,7 +27,7 @@
 </head>
 <body>
   <!-- FOUC SHIELD -->
-  <div id="fouc-shield" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #191919; z-index: 9999999; transition: opacity 0.2s ease; pointer-events: none;"></div>
+  <div id="fouc-shield" style="display:none;" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #191919; z-index: 9999999; transition: opacity 0.2s ease; pointer-events: none;"></div>
   
 
   <!-- LANDING PAGE -->
@@ -218,7 +218,7 @@
   <div id="mobile-backdrop" class="mobile-backdrop"></div>
 
   <!-- MAIN APP WRAPPER -->
-  <div id="app" class="app-container blur-content">
+  <div id="app" class="app-container">
     
     <!-- SIDEBAR NAVIGATION -->
     <aside class="sidebar glass-sidebar" id="sidebar">
@@ -345,11 +345,7 @@
         </nav>
       </div>
 
-      <div class="sidebar-footer">
-        <button id="btn-lock-now" class="btn btn-outline btn-block text-danger-hover" style="border-color: rgba(239, 68, 68, 0.35); color: #ef4444; background: rgba(239, 68, 68, 0.05);">
-          <i class="fa-solid fa-right-from-bracket"></i> Logout Account
-        </button>
-      </div>
+
     </aside>
 
     <!-- MAIN CONTENT AREA -->
@@ -902,38 +898,69 @@
 
           <div class="settings-grid">
 
-            <!-- PRIVATE GITHUB DB CONNECTION STATUS INDICATOR CARD -->
-            <div class="setting-card glass-panel" style="grid-column: span 2; border-color: rgba(16, 185, 129, 0.35); background: rgba(16, 185, 129, 0.04);">
+            <!-- GITHUB CLOUD SYNC & BACKUP CARD -->
+            <div class="setting-card glass-panel" style="grid-column: span 2; border-color: rgba(139, 92, 246, 0.35); background: rgba(139, 92, 246, 0.03);">
               <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
                 <div style="display:flex; align-items:center; gap:0.85rem;">
-                  <div style="width:44px; height:44px; border-radius:12px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); display:flex; align-items:center; justify-content:center; color:#10b981; font-size:1.35rem; flex-shrink:0;">
-                    <i class="fa-solid fa-database"></i>
+                  <div style="width:46px; height:46px; border-radius:12px; background:rgba(139,92,246,0.15); border:1px solid rgba(139,92,246,0.3); display:flex; align-items:center; justify-content:center; color:var(--accent-purple); font-size:1.4rem; flex-shrink:0;">
+                    <i class="fa-brands fa-github"></i>
                   </div>
                   <div>
-                    <h3 style="margin:0 0 0.2rem 0; font-size:1.15rem; color:#ffffff;">Private GitHub Database Status</h3>
-                    <p style="margin:0; font-size:0.85rem; color:#94a3b8;">Repo: <strong id="db-repo-name" style="color:#f8fafc;">Loading...</strong> (vault.json)</p>
+                    <h3 style="margin:0 0 0.2rem 0; font-size:1.15rem; color:#ffffff;">GitHub Cloud Backup & Sync</h3>
+                    <p style="margin:0; font-size:0.85rem; color:var(--text-muted);">Optional cloud backup to your private repository (<code>panthernote-db</code>).</p>
                   </div>
                 </div>
 
                 <div style="display:flex; align-items:center; gap:0.65rem;">
-                  <span id="db-status-dot" class="status-dot green" style="width:10px; height:10px;"></span>
-                  <span id="db-status-badge" class="badge-pill strong" style="background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:0.4rem 0.85rem; font-size:0.8rem;">
-                    <i class="fa-solid fa-circle-check"></i> CONNECTED & ENCRYPTED
+                  <span id="db-status-dot" class="status-dot" style="width:10px; height:10px; background:#64748b;"></span>
+                  <span id="db-status-badge" class="badge-pill" style="background:rgba(100,116,139,0.2); color:#94a3b8; border:1px solid rgba(100,116,139,0.3); padding:0.4rem 0.85rem; font-size:0.8rem;">
+                    <i class="fa-solid fa-hard-drive"></i> LOCAL STORAGE ONLY
                   </span>
                 </div>
               </div>
 
-              <div style="margin-top:1.15rem; padding-top:0.85rem; border-top:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.65rem; font-size:0.82rem; color:#94a3b8;">
-                <span>Encryption Protocol: <strong style="color:#06b6d4;">AES-256-GCM Zero-Knowledge</strong></span>
-                <span id="db-last-sync-time">Last Synced: <strong style="color:#f8fafc;">Just Now</strong></span>
-                                <a id="db-repo-link" href="https://github.com/sachinmandawi/panthernote-db" target="_blank" style="color:#6366f1; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:0.35rem;" title="View Private Database Repo">
-                  <span>View Private Repo</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                </a>
+              <!-- CONNECTED STATE VIEW -->
+              <div id="gh-sync-connected-panel" class="hidden" style="margin-top:1.15rem; padding-top:0.85rem; border-top:1px solid rgba(255,255,255,0.08);">
+                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.65rem; font-size:0.85rem; color:#94a3b8; margin-bottom:1rem;">
+                  <span>Account: <strong id="db-account-username" style="color:#f8fafc;">@sachinmandawi</strong></span>
+                  <span>Database Repo: <strong id="db-repo-name" style="color:#a78bfa;">panthernote-db</strong> (vault.json)</span>
+                  <span id="db-last-sync-time">Last Synced: <strong style="color:#f8fafc;">Just Now</strong></span>
+                </div>
+                <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+                  <button type="button" id="btn-manual-sync" class="btn btn-outline" style="flex:1; min-width:180px; border-color: rgba(16,185,129,0.4); color: #10b981;">
+                    <i class="fa-solid fa-rotate"></i> Sync Now 🔄
+                  </button>
+                  <a id="db-repo-link" href="https://github.com/sachinmandawi/panthernote-db" target="_blank" class="btn btn-outline" style="flex:1; min-width:180px; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:0.4rem; color:var(--text-light);">
+                    <span>View Private Repo</span> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75rem;"></i>
+                  </a>
+                  <button type="button" id="btn-disconnect-gh" class="btn btn-outline text-danger-hover" style="flex:1; min-width:180px; border-color: rgba(239,68,68,0.4); color: #ef4444;">
+                    <i class="fa-solid fa-link-slash"></i> Disconnect / Switch
+                  </button>
+                </div>
               </div>
-              <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.08);">
-                <button type="button" id="btn-manual-sync" class="btn btn-outline" style="width: 100%; border-color: rgba(16,185,129,0.4); color: #10b981; transition: all 0.2s;">
-                  <i class="fa-solid fa-rotate"></i> Force Manual Sync with GitHub
-                </button>
+
+              <!-- DISCONNECTED / TOKEN INPUT FORM -->
+              <div id="gh-sync-token-panel" style="margin-top:1.15rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.08);">
+                <label style="display:block; font-size:0.85rem; color:var(--text-light); margin-bottom:0.5rem; font-weight:600;">
+                  <i class="fa-solid fa-key" style="color:var(--accent-purple); margin-right:0.35rem;"></i> Connect with Personal Access Token (PAT)
+                </label>
+                <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+                  <div style="flex:1; min-width:280px; position:relative;">
+                    <input type="password" id="input-gh-token" class="form-input" placeholder="Paste GitHub Token (ghp_... or github_pat_...)" autocomplete="off" style="width:100%; padding-right:2.5rem; font-family:var(--font-mono); font-size:0.85rem;">
+                    <button type="button" id="btn-toggle-token-vis" class="btn-icon" style="position:absolute; right:0.65rem; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--text-muted);" title="Show/Hide Token">
+                      <i class="fa-regular fa-eye"></i>
+                    </button>
+                  </div>
+                  <button type="button" id="btn-connect-gh-token" class="btn btn-primary glow-btn" style="min-width:180px;">
+                    <i class="fa-solid fa-plug"></i> Connect & Sync
+                  </button>
+                </div>
+                <div style="margin-top:0.65rem; font-size:0.78rem; color:var(--text-muted); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+                  <span>Tokens are stored strictly on your local device.</span>
+                  <a href="https://github.com/settings/tokens/new?description=PantherNote+Vault+Sync&scopes=repo" target="_blank" style="color:var(--accent-purple); text-decoration:none; font-weight:600; display:inline-flex; align-items:center; gap:0.3rem;">
+                    <span>Generate GitHub Token with 'repo' scope</span> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.7rem;"></i>
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -1094,5 +1121,67 @@
   <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/index.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@2.3.0-rc.2/scroll-behaviour.min.js"></script>
   <script src="app.js?v=202608090734"></script>
+
+  <!-- SWITCH GITHUB ACCOUNT MODAL (OPTION B) -->
+  <div id="modal-switch-github" class="modal-overlay hidden" style="z-index: 10000; align-items:center; justify-content:center; padding: 1.5rem; background: rgba(8, 9, 13, 0.88); backdrop-filter: blur(14px);">
+    <div class="modal-content glass-panel" style="max-width: 520px; width: 100%; border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 20px; box-shadow: 0 25px 60px rgba(0,0,0,0.7); padding: 1.85rem;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 1.25rem;">
+        <div style="display:flex; align-items:center; gap: 0.75rem;">
+          <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); display:flex; align-items:center; justify-content:center; color: var(--accent-purple); font-size: 1.25rem;">
+            <i class="fa-solid fa-right-left"></i>
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 1.2rem; color: #fff; font-weight: 700;">Switch GitHub Account</h3>
+            <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Connect a different GitHub database repository</p>
+          </div>
+        </div>
+        <button type="button" id="btn-close-gh-switch-x" class="btn-icon" style="background: transparent; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1.35rem; display:flex; gap: 0.75rem; align-items:flex-start;">
+        <i class="fa-solid fa-circle-info" style="color: #f59e0b; margin-top: 0.2rem; flex-shrink: 0;"></i>
+        <span style="font-size: 0.82rem; color: #e2e8f0; line-height: 1.45;">
+          Aapka browser purane GitHub account me logged in ho sakta hai. Naya account connect karne ke liye <strong>Step 1</strong> me GitHub sign out karein, fir <strong>Step 2</strong> se connect karein:
+        </span>
+      </div>
+
+      <!-- Step 1 Card -->
+      <div class="glass-panel" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 1.15rem; margin-bottom: 1rem;">
+        <div style="display:flex; align-items:center; gap: 0.6rem; margin-bottom: 0.4rem;">
+          <span style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:rgba(239,68,68,0.2); color:#ef4444; font-size:0.75rem; font-weight:700;">1</span>
+          <strong style="color: #f8fafc; font-size: 0.92rem;">Step 1: Sign out on GitHub.com</strong>
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 0.85rem 0; line-height: 1.4;">
+          GitHub logout page open karke "Sign out" dabayein aur apne naye account me login karein.
+        </p>
+        <button type="button" id="btn-gh-logout-step" class="btn btn-outline" style="width: 100%; border-color: rgba(239, 68, 68, 0.4); color: #f87171; display:flex; align-items:center; justify-content:center; gap: 0.5rem;">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open GitHub Logout Page
+        </button>
+      </div>
+
+      <!-- Step 2 Card -->
+      <div class="glass-panel" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 1.15rem; margin-bottom: 1.5rem;">
+        <div style="display:flex; align-items:center; gap: 0.6rem; margin-bottom: 0.4rem;">
+          <span style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:rgba(16,185,129,0.2); color:#10b981; font-size:0.75rem; font-weight:700;">2</span>
+          <strong style="color: #f8fafc; font-size: 0.92rem;">Step 2: Connect with New Account</strong>
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 0.85rem 0; line-height: 1.4;">
+          Naye account me login karne ke baad, neeche click karke authorize karein.
+        </p>
+        <button type="button" id="btn-gh-auth-step" class="btn btn-primary btn-block" style="display:flex; align-items:center; justify-content:center; gap: 0.5rem;">
+          <i class="fa-brands fa-github"></i> Authorize & Connect New Account
+        </button>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end;">
+        <button type="button" id="btn-cancel-gh-switch" class="btn btn-outline" style="padding: 0.5rem 1.25rem; font-size: 0.85rem;">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
