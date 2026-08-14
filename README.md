@@ -2,15 +2,15 @@
 
   <!-- Animated Typing SVG Header Banner -->
   <a href="https://sachinmandawi.github.io/panthernote/">
-    <img src="https://readme-typing-svg.demolab.com?font=Outfit&weight=700&size=38&duration=3000&pause=1000&color=8B5CF6&center=true&vCenter=true&width=800&height=70&lines=PantherNote;Local-First+Password+Manager;Instant+Zero-Friction+Dashboard;Optional+GitHub+Cloud+Sync;Built-in+2FA+Authenticator" alt="PantherNote Animated Title" />
+    <img src="https://readme-typing-svg.demolab.com?font=Outfit&weight=700&size=38&duration=3000&pause=1000&color=8B5CF6&center=true&vCenter=true&width=800&height=70&lines=PantherNote;Local-First+Digital+Vault;Instant+0s+Dashboard+Launch;Optional+Private+GitHub+Cloud+Sync;Built-in+2FA+Authenticator" alt="PantherNote Animated Title" />
   </a>
 
   <p align="center">
-    <strong>🔒 Your digital life, locked, local, and seamlessly organized.</strong>
+    <strong>🔒 A lightning-fast, local-first digital vault for credentials, debit cards, 2FA codes, and notes.</strong>
   </p>
 
   <p align="center">
-    <a href="https://sachinmandawi.github.io/panthernote/"><img src="https://img.shields.io/badge/🚀_Live_Web_App-sachinmandawi.github.io%2Fpanthernote-8b5cf6?style=for-the-badge&logo=rocket" alt="Live App"></a>
+    <a href="https://sachinmandawi.github.io/panthernote/"><img src="https://img.shields.io/badge/🚀_Live_Web_App-sachinmandawi.github.io%2Fpanthernote-8b5cf6?style=for-the-badge&logo=rocket" alt="Live Web App"></a>
     <a href="https://github.com/sachinmandawi/panthernote/releases/download/v1.0.0/PantherNote-Setup-1.0.0.exe"><img src="https://img.shields.io/badge/📥_Download-Windows_Installer_(.exe)-2563eb?style=for-the-badge&logo=windows" alt="Download Windows Installer"></a>
     <a href="https://github.com/sachinmandawi/panthernote/releases/download/v1.0.0/PantherNote-Portable.exe"><img src="https://img.shields.io/badge/⚡_Download-Portable_EXE-059669?style=for-the-badge&logo=windows" alt="Download Portable EXE"></a>
   </p>
@@ -25,7 +25,9 @@
     <a href="#-about-panthernote"><strong>About</strong></a> •
     <a href="#-application-screenshots--ui-showcase"><strong>Screenshots</strong></a> •
     <a href="#-key-features"><strong>Features</strong></a> •
+    <a href="#-how-it-works"><strong>Architecture</strong></a> •
     <a href="#-tech-stack"><strong>Tech Stack</strong></a> •
+    <a href="#-quick-start--downloads"><strong>Downloads</strong></a> •
     <a href="#-license"><strong>License</strong></a>
   </p>
 
@@ -34,19 +36,21 @@
 ---
 
 > [!IMPORTANT]
-> 🛡️ **Local-First Privacy Guarantee**: All passwords, cards, and notes are stored strictly on your local device by default. Cloud sync is 100% optional via your private GitHub repository (<code>panthernote-db</code>).
+> 🛡️ **Local-First Privacy Guarantee**: PantherNote is 100% offline-ready and local-first by default. All vault records are saved directly onto your device's local database. Cloud backup is completely optional via your own private GitHub repository (<code>panthernote-db</code>).
 
 ---
 
 ## 📖 About PantherNote
 
-**PantherNote** is a modern, privacy-first, local digital vault and password manager crafted for individuals who value speed, simplicity, and total ownership of their data.
+**PantherNote** is a modern, privacy-first digital vault and password manager built for individuals who value speed, simplicity, and complete ownership of their data.
 
-- **⚡ Instant 0-Second Startup**: Launches directly into your Dashboard with zero login barriers.
-- **💾 Local-First Persistence**: Everything is saved automatically and securely in your device's local database.
-- **☁️ Optional GitHub Cloud Sync**: Connect anytime from Settings by pasting your GitHub Personal Access Token (PAT) for encrypted cloud backup in your private `panthernote-db` repository.
-- **🔑 Built-in 2FA Authenticator**: Calculate RFC 6238 6-digit TOTP codes with 30-second live countdown ring timers.
-- **3D Interactive Debit Cards**: Realistic card preview with interactive 3D flip.
+Traditional cloud password managers force users through tedious login barriers, master password friction, and reliance on centralized third-party servers. **PantherNote reimagines the experience from the ground up:**
+
+- **⚡ Instant 0-Second Dashboard Launch**: Open the app and immediately view, search, and copy your passwords, cards, and 2FA codes with zero authentication screens or loading delays.
+- **💾 Local-First Device Storage**: All items are automatically persisted on your local device. Work completely offline anytime, anywhere.
+- **☁️ Frictionless Private Cloud Backup**: Connect your private GitHub repository (<code>panthernote-db</code>) anytime by simply pasting a Personal Access Token (PAT) in Settings. Zero browser cookie conflicts or OAuth redirect loops.
+- **🔑 Built-in 2FA Authenticator**: Replace standalone authenticator apps with an integrated live RFC 6238 TOTP generator featuring 30-second countdown ring timers.
+- **💳 3D Interactive Card Vault**: Manage debit and credit cards with realistic interactive 3D flip previews, CVV masking, and 1-tap copy tools.
 
 ---
 
@@ -79,7 +83,7 @@
 
 <br />
 
-### 6️⃣ Settings, Encryption Keys & Backup Options
+### 6️⃣ Settings, Cloud Sync & Backup Options
 <img src="screenshots/6-Settings%20and%20Backup.png" alt="Settings and Backup" width="95%" />
 
 <br />
@@ -96,35 +100,62 @@
 <table>
   <tr>
     <td width="50%">
-      <h3>💾 Local-First Architecture</h3>
-      <p>Instant startup and lightning-fast performance. All vault records are saved directly on your local device.</p>
+      <h3>⚡ Instant Direct Dashboard</h3>
+      <p>Launches straight into your vault in 0 seconds. No login screens, master password prompts, or session timeouts.</p>
     </td>
+    <td width="50%">
+      <h3>💾 Local-First Persistence</h3>
+      <p>All passwords, credit cards, bank accounts, and secure notes are stored directly and securely on your local device.</p>
+    </td>
+  </tr>
+  <tr>
     <td width="50%">
       <h3>☁️ Optional GitHub Cloud Sync</h3>
-      <p>Synchronize vault data directly to your private GitHub repository (<code>panthernote-db</code>) simply by entering your Token in Settings.</p>
+      <p>Backup and sync vault records directly to your private GitHub repository (<code>panthernote-db</code>) via Settings PAT token.</p>
     </td>
-  </tr>
-  <tr>
     <td width="50%">
       <h3>🔑 Built-in 2FA Authenticator</h3>
-      <p>Integrated live TOTP generator with 30-second countdown ring timers. Calculate RFC 6238 6-digit 2FA codes for all your accounts.</p>
-    </td>
-    <td width="50%">
-      <h3>🛡️ Security & Health Audit</h3>
-      <p>Proactive security scanner detects weak, reused, or stale (90+ day old) passwords with instant health score feedback.</p>
+      <p>Integrated RFC 6238 TOTP generator with 30-second live countdown rings. Offline calculation with zero external server dependency.</p>
     </td>
   </tr>
   <tr>
+    <td width="50%">
+      <h3>🛡️ Security & Health Audit</h3>
+      <p>Proactive scanner detects weak, reused, or stale (90+ day old) passwords with instant health score feedback.</p>
+    </td>
     <td width="50%">
       <h3>🎨 Smart Brand Auto-Detection</h3>
       <p>Instant brand recognition for 100+ popular services, credit cards, and banks (Google, GitHub, Supabase, HDFC, SBI, PayPal).</p>
     </td>
+  </tr>
+  <tr>
     <td width="50%">
-      <h3>⚡ Smart 1-Tap Copy & Bulk Tools</h3>
-      <p>Instant 1-tap copy for usernames, passwords, card numbers, and CVV codes with haptic toast notifications.</p>
+      <h3>⚡ 1-Tap Copy & Drag Auto-Scroll</h3>
+      <p>Instant 1-tap copy for usernames, passwords, and card numbers. Dynamic 60fps auto-scrolling when dragging cards near viewport edges.</p>
+    </td>
+    <td width="50%">
+      <h3>⚠️ 3-Option Granular Danger Zone</h3>
+      <p>Granular purge options: <strong>Delete Local Only</strong>, <strong>Delete GitHub Backup Only</strong>, or <strong>Full Purge (Both)</strong> with <code>DELETE</code> confirmation protection.</p>
     </td>
   </tr>
 </table>
+
+---
+
+## 🏗️ How It Works
+
+```mermaid
+flowchart TD
+    A["🚀 Launch PantherNote\n(Web or Desktop App)"] --> B["⚡ Direct Dashboard Access\n(0s Startup - Zero Login Friction)"]
+    B --> C["💾 Local Database Storage\n(All items persisted on device)"]
+    
+    C --> D{"Optional Cloud Backup?"}
+    D -->|Local Only| E["🔒 100% Offline & Private on Device"]
+    D -->|Enable Cloud Sync| F["⚙️ Go to Settings -> GitHub Cloud Backup"]
+    F --> G["🔑 Paste GitHub Token (PAT) & Click Connect"]
+    G --> H["☁️ Background Sync to Private Repo: panthernote-db/vault.json"]
+    H --> I["✅ Continuous Local + Cloud Sync Active"]
+```
 
 ---
 
@@ -132,29 +163,41 @@
 
 <div align="center">
 
-| Layer | Technology | Details |
+| Component | Technology | Description |
 | :--- | :--- | :--- |
-| **Frontend Core** | `HTML5` / `Vanilla JavaScript (ES2024)` | High-performance SPA with zero framework overhead |
+| **Frontend Core** | `HTML5` / `Vanilla JavaScript (ES2024)` | High-performance Single Page Application with 0 framework overhead |
 | **Styling Engine** | `Vanilla CSS3` | Dark Glassmorphic Design System with fluid micro-animations |
-| **Cryptography & 2FA** | `Web Crypto API (SubtleCrypto)` | Client-side `HMAC-SHA1` RFC 6238 TOTP Engine |
-| **Desktop App** | `Electron` & `electron-builder` | Standalone Windows Installer & Portable Executable |
+| **2FA Cryptography** | `Web Crypto API (SubtleCrypto)` | Native browser-based `HMAC-SHA1` RFC 6238 TOTP Engine |
+| **Desktop Application** | `Electron` & `electron-builder` | Standalone Windows NSIS Setup & Portable Executables |
 | **Vault Storage** | `Local Storage` & `GitHub REST API v3` | Local-first storage with optional private repository backup |
-| **Icon System** | `FontAwesome 6 Free` | Scalable vector UI icons |
+| **Icon System** | `FontAwesome 6 Free` | Scalable vector UI icons & brand palettes |
 
 </div>
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start & Downloads
 
-### 1. Clone the repository
+### 📱 Windows Desktop App (.exe)
+Download the latest pre-compiled binaries from the **[Releases Page](https://github.com/sachinmandawi/panthernote/releases/latest)**:
+
+| File | Type | Description | Download |
+| :--- | :--- | :--- | :--- |
+| **`PantherNote-Setup-1.0.0.exe`** | **Windows Installer** | Standard Windows NSIS Setup with Start Menu & Desktop shortcuts | [📥 Download Setup](https://github.com/sachinmandawi/panthernote/releases/download/v1.0.0/PantherNote-Setup-1.0.0.exe) |
+| **`PantherNote-Portable.exe`** | **Portable Standalone** | No installation required. Double click to run directly anywhere | [⚡ Download Portable](https://github.com/sachinmandawi/panthernote/releases/download/v1.0.0/PantherNote-Portable.exe) |
+
+---
+
+### 🌐 Web App (Local Development)
 ```bash
+# 1. Clone the repository
 git clone https://github.com/sachinmandawi/panthernote.git
 cd panthernote
-```
 
-### 📱 Desktop App
-Download the official Windows Installer or Portable EXE from the [Releases Page](https://github.com/sachinmandawi/panthernote/releases).
+# 2. Start local server
+npx -y serve -l 8000 .
+# Open http://localhost:8000 in your browser
+```
 
 ---
 
@@ -164,5 +207,5 @@ Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more details
 
 <div align="center">
   <br />
-  <sub>Crafted with ❤️ for total privacy & productivity. Powered by PantherNote.</sub>
+  <sub>Crafted with ❤️ for total privacy, productivity, and simplicity. Powered by PantherNote.</sub>
 </div>
