@@ -46,6 +46,10 @@
     },
 
     deriveKey: async function (password, salt) {
+      let saltBuffer = salt;
+      if (typeof salt === 'string') {
+        saltBuffer = this.base64ToBuffer(salt);
+      }
       const enc = new TextEncoder();
       const keyMaterial = await window.crypto.subtle.importKey(
         'raw',
@@ -58,7 +62,7 @@
       return await window.crypto.subtle.deriveKey(
         {
           name: 'PBKDF2',
-          salt: salt,
+          salt: saltBuffer,
           iterations: 100000,
           hash: 'SHA-256'
         },
@@ -4533,33 +4537,103 @@
     showToast('Unencrypted CSV exported!', 'success');
   }
 
-  function handleImportFile(file) {
+    function handleImportFile(file) {
     const reader = new FileReader();
     reader.onload = async function (e) {
       const content = e.target.result;
       try {
         if (file.name.endsWith('.json')) {
           const imported = JSON.parse(content);
-          if (imported.vault) {
-            let decData = await CryptoEngine.decryptData(imported.vault, state.masterKey);
-            let decItems = [];
-            if (decData && !Array.isArray(decData) && decData.items) {
-              decItems = decData.items;
-              if (decData.customOrders) {
-                if (!state.customOrders) state.customOrders = {};
-                for (let key in decData.customOrders) {
-                  if (!state.customOrders[key]) state.customOrders[key] = [];
-                  state.customOrders[key] = [...new Set([...state.customOrders[key], ...decData.customOrders[key]])];
-                }
+          let decItems = [];
+          let decCategories = [];
+          let decOrders = {};
+
+          // CASE 1: Encrypted database vault.json (contains salt and vault ciphertext)
+          if (imported.vault && imported.salt) {
+            let key = state.masterKey;
+            if (!key) {
+              const pass = prompt('🔐 This database is encrypted with a Master Password.\n\nPlease enter the Master Password used for this database:');
+              if (!pass) {
+                showToast('Import cancelled: Master Password required for encrypted vault', 'warning');
+                return;
               }
-            } else {
-              decItems = decData || [];
+              try {
+                key = await CryptoEngine.deriveKey(pass, imported.salt);
+                if (imported.verifier) {
+                  const isValid = await CryptoEngine.verifyKey(imported.verifier, key);
+                  if (!isValid) {
+                    showToast('Incorrect Master Password! Cannot decrypt database.', 'error');
+                    return;
+                  }
+                }
+              } catch (deriveErr) {
+                showToast('Failed to derive encryption key: ' + deriveErr.message, 'error');
+                return;
+              }
             }
-            state.vaultItems = [...state.vaultItems, ...decItems];
-            await renderVault();
-            await saveVaultToGitHub();
-            showToast(`Imported ${decItems.length} items successfully!`, 'success');
+
+            const decData = await CryptoEngine.decryptData(imported.vault, key);
+            if (decData && !Array.isArray(decData) && decData.items) {
+              decItems = decData.items || [];
+              decCategories = decData.customCategories || decData.categories || [];
+              decOrders = decData.customOrders || {};
+            } else if (Array.isArray(decData)) {
+              decItems = decData;
+            }
           }
+          // CASE 2: Unencrypted JSON / Direct export (contains items array)
+          else if (imported.items && Array.isArray(imported.items)) {
+            decItems = imported.items;
+            decCategories = imported.categories || imported.customCategories || [];
+            decOrders = imported.customOrders || {};
+          }
+          // CASE 3: Array of items directly
+          else if (Array.isArray(imported)) {
+            decItems = imported;
+          }
+
+          if (!decItems || decItems.length === 0) {
+            showToast('No items found in import file', 'warning');
+            return;
+          }
+
+          // Merge items (preventing duplicate IDs)
+          const existingIds = new Set((state.vaultItems || []).map(i => i.id));
+          const newItemsToAdd = [];
+
+          for (const item of decItems) {
+            if (item && item.title) {
+              if (existingIds.has(item.id)) {
+                item.id = 'item_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+              }
+              newItemsToAdd.push(item);
+            }
+          }
+
+          state.vaultItems = [...(state.vaultItems || []), ...newItemsToAdd];
+
+          // Merge custom categories
+          if (Array.isArray(decCategories) && decCategories.length > 0) {
+            const catMap = new Map((state.customCategories || []).map(c => [c.id, c]));
+            for (const cat of decCategories) {
+              if (cat && cat.id) catMap.set(cat.id, cat);
+            }
+            state.customCategories = Array.from(catMap.values());
+          }
+
+          // Merge custom orders
+          if (decOrders && typeof decOrders === 'object') {
+            if (!state.customOrders) state.customOrders = {};
+            for (let catKey in decOrders) {
+              if (!state.customOrders[catKey]) state.customOrders[catKey] = [];
+              state.customOrders[catKey] = [...new Set([...state.customOrders[catKey], ...decOrders[catKey]])];
+            }
+          }
+
+          saveLocalData();
+          await renderVault();
+          await syncVaultToGitHub(true);
+          showToast(`🎉 Successfully imported ${newItemsToAdd.length} items from database!`, 'success');
         } else if (file.name.endsWith('.csv')) {
           const lines = content.split('\n').filter(l => l.trim());
           let count = 0;
@@ -4579,12 +4653,14 @@
               count++;
             }
           }
+          saveLocalData();
           await renderVault();
-          await saveVaultToGitHub();
+          await syncVaultToGitHub(true);
           showToast(`Imported ${count} items from CSV!`, 'success');
         }
       } catch (err) {
-        showToast('Failed to parse or decrypt import file!', 'error');
+        console.error('Import error:', err);
+        showToast('Failed to parse or decrypt import file: ' + err.message, 'error');
       }
     };
     reader.readAsText(file);
