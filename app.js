@@ -1629,6 +1629,83 @@
   }
 
 
+  
+  // --- HIGH-PERFORMANCE DYNAMIC DRAG AUTO-SCROLLER ---
+  const DragAutoScroller = window.DragAutoScroller = (() => {
+    let scrollInterval = null;
+    let scrollVelocity = 0;
+    let targetContainer = null;
+
+    function getScrollContainer(el) {
+      if (targetContainer && targetContainer.isConnected) return targetContainer;
+      let curr = el;
+      while (curr && curr !== document.body && curr !== document.documentElement) {
+        const style = window.getComputedStyle(curr);
+        if (style.overflowY === 'auto' || style.overflowY === 'scroll') {
+          targetContainer = curr;
+          return curr;
+        }
+        curr = curr.parentElement;
+      }
+      targetContainer = document.querySelector('.content-scroll') || document.documentElement;
+      return targetContainer;
+    }
+
+    function update(clientY, sourceEl) {
+      const container = getScrollContainer(sourceEl);
+      if (!container) return;
+
+      const rect = (container && container.getBoundingClientRect)
+        ? container.getBoundingClientRect()
+        : { top: 0, bottom: window.innerHeight };
+
+      const edgeMargin = 140;
+      const topThreshold = Math.max(0, rect.top) + edgeMargin;
+      const bottomThreshold = Math.min(window.innerHeight, rect.bottom) - edgeMargin;
+
+      if (clientY < topThreshold) {
+        // Dragging near top -> Scroll UP
+        const ratio = Math.max(0, (topThreshold - clientY) / edgeMargin);
+        scrollVelocity = -Math.round(6 + ratio * 28);
+        start(container);
+      } else if (clientY > bottomThreshold) {
+        // Dragging near bottom -> Scroll DOWN
+        const ratio = Math.max(0, (clientY - bottomThreshold) / edgeMargin);
+        scrollVelocity = Math.round(6 + ratio * 28);
+        start(container);
+      } else {
+        stop();
+      }
+    }
+
+    function start(container) {
+      if (scrollInterval) return;
+      scrollInterval = setInterval(() => {
+        if (!scrollVelocity) {
+          stop();
+          return;
+        }
+        const scrollTarget = container || targetContainer || document.querySelector('.content-scroll') || document.documentElement;
+        if (scrollTarget && scrollTarget !== document.documentElement && scrollTarget !== document.body) {
+          scrollTarget.scrollTop += scrollVelocity;
+        } else {
+          window.scrollBy({ top: scrollVelocity, behavior: 'auto' });
+        }
+      }, 16);
+    }
+
+    function stop() {
+      if (scrollInterval) {
+        clearInterval(scrollInterval);
+        scrollInterval = null;
+      }
+      scrollVelocity = 0;
+      targetContainer = null;
+    }
+
+    return { update, stop };
+  })();
+
   async function handleDropReorder(draggedId, targetId) {
     const container = DOM.itemsContainer;
     const cards = Array.from(container.querySelectorAll('.item-card'));
@@ -5284,15 +5361,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Global DragOver listener for smooth auto-scrolling anywhere in viewport
 document.addEventListener('dragover', (e) => {
-  if (window._draggedCardElement) {
-    DragAutoScroller.update(e.clientY, window._draggedCardElement);
+  if (window._draggedCardElement && window.DragAutoScroller) {
+    e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+    window.DragAutoScroller.update(e.clientY, window._draggedCardElement);
   }
 });
 document.addEventListener('dragend', () => {
-  DragAutoScroller.stop();
+  if (window.DragAutoScroller) window.DragAutoScroller.stop();
   window._draggedCardElement = null;
 });
 document.addEventListener('drop', () => {
-  DragAutoScroller.stop();
+  if (window.DragAutoScroller) window.DragAutoScroller.stop();
   window._draggedCardElement = null;
 });
