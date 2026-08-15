@@ -453,6 +453,7 @@
     navGen: document.getElementById('nav-generator'),
     navSec: document.getElementById('nav-security'),
     navSet: document.getElementById('nav-settings'),
+    navDev: document.getElementById('nav-developer'),
     btnLockNow: document.getElementById('btn-lock-now'),
     sidebarTagsContainer: document.getElementById('sidebar-tags-nav'),
     sidebarTagsNav: document.getElementById('sidebar-tags-nav'),
@@ -464,6 +465,7 @@
     viewGen: document.getElementById('view-generator'),
     viewSec: document.getElementById('view-security'),
     viewSet: document.getElementById('view-settings'),
+    viewDev: document.getElementById('view-developer'),
 
     // Stats
     statTotal: document.getElementById('stat-total'),
@@ -5269,6 +5271,14 @@
       DOM.navSet.addEventListener('click', () => {
         setActiveSidebarButton(DOM.navSet);
         switchView(DOM.viewSet);
+        closeMobileMenu();
+      });
+    }
+
+    if (DOM.navDev) {
+      DOM.navDev.addEventListener('click', () => {
+        setActiveSidebarButton(DOM.navDev);
+        switchView(DOM.viewDev);
         closeMobileMenu();
       });
     }
