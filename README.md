@@ -209,3 +209,14 @@ Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more details
   <br />
   <sub>Crafted with ❤️ for total privacy, productivity, and simplicity. Powered by PantherNote.</sub>
 </div>
+
+
+---
+
+## 👤 Author
+
+**Sachin Mandawi** — *Software & Android Developer*
+- 🌐 **Official Website & Portfolio:** [https://sachinmandawi.me](https://sachinmandawi.me)
+- 💻 **GitHub:** [@sachinmandawi](https://github.com/sachinmandawi)
+- 📷 **Instagram:** [@sachinmandawi](https://www.instagram.com/sachinmandawi)
+- 📌 **Pinterest:** [in.pinterest.com/sachinmandawi](https://in.pinterest.com/sachinmandawi/)
